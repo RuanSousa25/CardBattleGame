@@ -25,9 +25,18 @@ public class Game extends Canvas implements Runnable, MouseListener, KeyListener
 	
 	
 	
-	//Dimensões da tela
+	//Dimensões da JFrame inicial
 	public static int WIDTH = 1000;
 	public static int HEIGHT = 650;
+	
+	//Dimensões do canva
+	
+	public static double scale;
+	
+	//offset
+	public static int horizontalOffset;
+	public static int verticalOffset;
+	
 	
 	public static GraphicsDevice device;
 	public static boolean isFullScreen;
@@ -38,10 +47,13 @@ public class Game extends Canvas implements Runnable, MouseListener, KeyListener
 	
 	public static Random rand;
 	
+	public static GameState gameState;
+	
 	public Game() {
 		rand = new Random();
 		device = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()[0];
 		isFullScreen = false;
+		gameState = new GameState();
 		
 		addMouseListener(this);
 		addKeyListener(this);
@@ -51,6 +63,7 @@ public class Game extends Canvas implements Runnable, MouseListener, KeyListener
                 super.componentResized(e);
                 
                 image = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
+                
             }
         });
 		
@@ -130,19 +143,21 @@ public class Game extends Canvas implements Runnable, MouseListener, KeyListener
 	    	canvasHeight = (int) (frame.getContentPane().getWidth()/ASPECT_RATIO);
 	    }
 	    
-	    double canvasX =  (frame.getContentPane().getWidth()-canvasWidth)/2;
-	    double canvasY =  (frame.getContentPane().getHeight()-canvasHeight)/2;
+	    horizontalOffset =  (frame.getContentPane().getWidth()-canvasWidth)/2;
+	    verticalOffset =  (frame.getContentPane().getHeight()-canvasHeight)/2;
 	    
 	    
 	    g.setColor(new Color(20, 20, 20));
-	    if(!frame.isUndecorated()) {
-	    	g.fillRect((int) canvasX, (int)canvasY, canvasWidth-13, canvasHeight-35);
-	    }else {
-		    g.fillRect((int) canvasX, (int)canvasY, canvasWidth, canvasHeight);
-	    }
+	   
+	    	g.fillRect( horizontalOffset, verticalOffset, canvasWidth, canvasHeight);
+	    
+	    
+	    scale = (double)canvasWidth/(double)WIDTH;
+	    System.out.println(scale);
+	    gameState.render(g);
 	    g.dispose();
 	    g = bs.getDrawGraphics();
-	    g.drawImage(image, 0, 0, frame.getWidth(), frame.getHeight(), null);
+	    g.drawImage(image, 0, 0, frame.getContentPane().getWidth(), frame.getContentPane().getHeight(), null);
 	    bs.show();
 
 	}
